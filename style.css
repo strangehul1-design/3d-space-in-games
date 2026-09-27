@@ -1,0 +1,313 @@
+/* ==========================================================
+   Токены: цвета, шрифты, отступы.
+   Поменяй число здесь - поменяется весь сайт.
+   ========================================================== */
+:root {
+  --paper: #f1f5fa;        /* фон страницы: миллиметровка */
+  --paper-grid: rgba(14, 33, 61, 0.05);
+  --card: #ffffff;
+  --ink: #0e213d;          /* основной текст */
+  --ink-soft: #4a5d7a;
+  --rule: #d3ddea;
+  --view: #0f2240;         /* фон 3D-окон */
+
+  /* Цвета осей - как во всех 3D-редакторах */
+  --x: #e5484d;
+  --y: #2f9e57;
+  --z: #2f6feb;
+
+  --font-display: "Unbounded", system-ui, sans-serif;
+  --font-body: "Golos Text", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius: 14px;
+  --wrap: 1200px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0a1526;
+    --paper-grid: rgba(180, 205, 240, 0.045);
+    --card: #11203a;
+    --ink: #e4ecf7;
+    --ink-soft: #9fb2cc;
+    --rule: #22385a;
+    --x: #ff6b6f;
+    --y: #4cc47a;
+    --z: #6aa1ff;
+  }
+}
+
+/* ========== Основа ========== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  font: 400 18px/1.6 var(--font-body);
+  color: var(--ink);
+  background-color: var(--paper);
+  /* клетка, как на миллиметровке */
+  background-image:
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2 { font-family: var(--font-display); line-height: 1.12; margin: 0; }
+h1 { font-weight: 700; font-size: clamp(2.3rem, 5.2vw, 4.4rem); letter-spacing: -0.02em; }
+h2 { font-weight: 500; font-size: clamp(1.55rem, 2.8vw, 2.3rem); letter-spacing: -0.01em; margin-bottom: 0.9em; }
+p { margin: 0 0 1em; }
+b { font-weight: 600; }
+a { color: inherit; }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: 24px; }
+.small { font-size: 0.9rem; color: var(--ink-soft); }
+
+.c-x { color: var(--x); }
+.c-y { color: var(--y); }
+.c-z { color: var(--z); }
+
+kbd {
+  font: 500 0.78em var(--font-mono);
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--rule);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--card);
+}
+
+:focus-visible { outline: 2px solid var(--z); outline-offset: 2px; }
+
+/* ========== Шапка ========== */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 32px;
+  padding: 12px 24px;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.brand { font: 700 1rem var(--font-display); text-decoration: none; white-space: nowrap; }
+.lessons-nav { display: flex; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.lessons-nav a {
+  padding: 6px 12px; border-radius: 999px;
+  text-decoration: none; font-size: 0.92rem; color: var(--ink-soft); white-space: nowrap;
+}
+.lessons-nav a:hover { color: var(--ink); background: var(--card); }
+.lessons-nav a[aria-current="true"] { color: var(--paper); background: var(--ink); }
+
+/* ========== Первый экран ========== */
+.hero { position: relative; }
+.view-hero {
+  width: 100%;
+  aspect-ratio: auto;
+  height: min(86vh, 820px); min-height: 520px;
+  border-radius: 0;
+}
+.hero-copy {
+  position: absolute; z-index: 2;
+  top: clamp(40px, 9vh, 96px);
+  left: max(24px, calc((100vw - var(--wrap)) / 2 + 24px));
+  max-width: 34rem;
+  color: #fff;
+  pointer-events: none;           /* клики проходят сквозь текст в 3D-сцену */
+}
+.hero-copy p { color: #c6d6ee; font-size: 1.1rem; max-width: 30rem; margin-top: 1em; }
+.hero-copy .btn { pointer-events: auto; }
+
+.hero-hud {
+  position: absolute; left: max(24px, calc((100vw - var(--wrap)) / 2 + 24px)); bottom: 24px; z-index: 2;
+  padding: 12px 16px; border-radius: 10px;
+  background: rgba(8, 20, 40, 0.72); color: #fff;
+  pointer-events: none;
+}
+.hud-title { margin: 0 0 4px; font-size: 0.82rem; color: #9fb5d6; }
+.hero-hud .coords { margin: 0; display: flex; gap: 18px; font: 500 1rem var(--font-mono); }
+.hero-hud output { display: inline-block; min-width: 4.2ch; text-align: right; color: #fff; }
+.hero-hud .c-x { color: #ff7b7f; } .hero-hud .c-y { color: #5fd08a; } .hero-hud .c-z { color: #7eaeff; }
+
+.hero-hint {
+  position: absolute; right: 24px; bottom: 24px; z-index: 2; margin: 0;
+  max-width: 19rem; font-size: 0.9rem; color: #9fb5d6; text-align: right;
+  pointer-events: none;
+}
+.view-hero .view-status { top: auto; bottom: 28px; transform: translateX(-50%); }
+.hero-note { padding-top: 40px; padding-bottom: 8px; max-width: 52rem; color: var(--ink-soft); }
+.hero-note b { color: var(--ink); }
+
+/* ========== Уроки ========== */
+.lesson {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 56px;
+  align-items: start;
+  padding-top: 88px; padding-bottom: 88px;
+  border-top: 1px solid var(--rule);
+}
+.lesson-text { max-width: 36rem; }
+.lesson-step { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 0.6em; }
+.lesson-stage { position: sticky; top: 84px; }
+
+/* 3D-окно */
+.view {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--view);
+  touch-action: none;             /* жесты на сцене крутят камеру, а не страницу */
+}
+.view canvas { display: block; width: 100%; height: 100%; }
+.view-status, .view-error {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; margin: 0;
+  padding: 8px 16px; border-radius: 999px; background: rgba(8, 20, 40, 0.72);
+  font-size: 0.9rem; color: #c6d6ee; white-space: nowrap;
+}
+.view-error { white-space: normal; text-align: center; color: #ffd2d3; border-radius: 12px; max-width: 80%; }
+
+/* Панель управления под окном */
+.controls {
+  display: grid; gap: 12px;
+  margin-top: 14px; padding: 16px 18px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+.row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+
+.slider {
+  display: grid; grid-template-columns: minmax(9.5rem, auto) 1fr 4ch; align-items: center; gap: 14px;
+  font-size: 0.95rem;
+}
+.slider input { width: 100%; accent-color: var(--ink); }
+.slider.x input { accent-color: var(--x); }
+.slider.y input { accent-color: var(--y); }
+.slider.z input { accent-color: var(--z); }
+.slider.x { color: var(--x); } .slider.y { color: var(--y); } .slider.z { color: var(--z); }
+.slider output { font: 500 0.9rem var(--font-mono); text-align: right; color: var(--ink); }
+
+.readout { margin: 0; font: 500 0.92rem var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.readout-table { border-collapse: collapse; font-size: 0.92rem; width: 100%; }
+.readout-table th { text-align: left; font-weight: 500; color: var(--ink-soft); padding: 4px 0; }
+.readout-table td { font: 500 0.92rem var(--font-mono); text-align: right; padding: 4px 0 4px 12px; font-variant-numeric: tabular-nums; }
+.readout-table tr + tr { border-top: 1px solid var(--rule); }
+
+/* Кнопки */
+.btn {
+  display: inline-block; font: 600 0.95rem var(--font-body);
+  padding: 10px 18px; border-radius: 10px; border: 1px solid transparent;
+  text-decoration: none; cursor: pointer;
+}
+.btn-light { background: #fff; color: #0e213d; margin-top: 8px; }
+.btn-light:hover { background: #dce8fb; }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--rule); padding: 7px 14px; }
+.btn-ghost:hover { border-color: var(--ink-soft); }
+
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.seg button {
+  font: 500 0.92rem var(--font-body); color: var(--ink);
+  background: transparent; border: 0; padding: 7px 14px; cursor: pointer;
+}
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.seg button[aria-pressed="true"] kbd { background: transparent; color: inherit; border-color: currentColor; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px;
+  font-size: 0.9rem; cursor: pointer;
+}
+.chip input[type="checkbox"] { accent-color: var(--ink); margin: 0; }
+.chip input[type="color"] { width: 26px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; }
+
+/* Таблица движков */
+.engines { border-collapse: collapse; margin: 0 0 1em; font-size: 0.95rem; }
+.engines th { text-align: left; font-weight: 500; color: var(--ink-soft); padding: 6px 24px 6px 0; border-bottom: 1px solid var(--rule); }
+.engines td { padding: 6px 24px 6px 0; border-bottom: 1px solid var(--rule); }
+.engines td:nth-child(2) { font: 700 1rem var(--font-mono); }
+
+/* Код */
+.code {
+  margin: 0 0 1em; padding: 16px 18px; border-radius: 10px;
+  background: var(--view); color: #cfe0ff;
+  font: 500 0.85rem/1.6 var(--font-mono); overflow-x: auto;
+}
+
+/* Урок 5: рамка вида игрока (сама картинка рисуется three.js под ней) */
+.inset {
+  position: absolute; right: 12px; bottom: 12px; z-index: 2;
+  width: 38%; aspect-ratio: 16 / 9;
+  border: 2px solid #ffc53d; border-radius: 6px;
+  pointer-events: none;
+}
+.inset span {
+  position: absolute; left: 0; bottom: 100%; margin-bottom: 4px;
+  font-size: 0.78rem; color: #ffc53d;
+}
+
+/* Урок 7: игра */
+.view-game { cursor: pointer; }
+.view-game:focus { cursor: default; outline: 2px solid var(--y); outline-offset: 3px; }
+.focus-hint {
+  position: absolute; inset: 0; z-index: 2; margin: 0;
+  display: grid; place-items: center;
+  font: 500 1.1rem var(--font-display); color: #fff;
+  background: rgba(8, 20, 40, 0.45);
+  pointer-events: none; transition: opacity 0.2s;
+}
+.view-game:focus .focus-hint { opacity: 0; }
+.game-msg {
+  position: absolute; left: 50%; top: 20px; transform: translateX(-50%); z-index: 3; margin: 0;
+  padding: 8px 16px; border-radius: 999px; background: var(--y); color: #fff; font-weight: 600;
+  white-space: nowrap;
+}
+.keys-help { margin: 0; }
+.keys-help kbd { margin-right: 2px; }
+
+.pad { display: none; grid-template-columns: repeat(3, 48px) 1fr; grid-template-rows: 44px 44px; gap: 6px; }
+.pad button {
+  font-size: 1rem; border: 1px solid var(--rule); border-radius: 10px;
+  background: var(--card); color: var(--ink); touch-action: none; user-select: none;
+}
+.pad button:active, .pad button.is-down { background: var(--ink); color: var(--paper); }
+.pad [data-key="KeyW"] { grid-column: 2; grid-row: 1; }
+.pad [data-key="KeyA"] { grid-column: 1; grid-row: 2; }
+.pad [data-key="KeyS"] { grid-column: 2; grid-row: 2; }
+.pad [data-key="KeyD"] { grid-column: 3; grid-row: 2; }
+.pad .pad-run { grid-column: 4; grid-row: 1 / span 2; justify-self: end; width: 88px; }
+
+/* На сенсорных экранах показываем кнопки вместо подсказки про клавиатуру */
+@media (hover: none) and (pointer: coarse) {
+  .pad { display: grid; }
+  .keys-help { display: none; }
+}
+
+/* ========== Подвал ========== */
+.footer { padding-top: 40px; padding-bottom: 64px; border-top: 1px solid var(--rule); color: var(--ink-soft); font-size: 0.95rem; }
+.footer code { font-family: var(--font-mono); font-size: 0.9em; }
+
+/* ========== Телефоны и узкие окна ========== */
+@media (max-width: 900px) {
+  .topbar { gap: 16px; padding: 10px 16px; }
+  .lesson { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-top: 56px; padding-bottom: 56px; }
+  .lesson-stage { position: static; }
+  .wrap { padding-inline: 16px; }
+
+  .hero-copy { position: static; color: var(--ink); padding: 32px 16px 20px; max-width: none; pointer-events: auto; }
+  .hero-copy p { color: var(--ink-soft); }
+  .hero-copy .btn-light { background: var(--ink); color: var(--paper); }
+  .view-hero { height: 62vh; min-height: 380px; }
+  .hero-hud { left: 12px; bottom: 12px; padding: 8px 12px; }
+  .hero-hud .coords { gap: 12px; font-size: 0.9rem; }
+  .hero-hint { right: 12px; top: 12px; bottom: auto; max-width: 13rem; font-size: 0.8rem; }
+
+  .slider { grid-template-columns: 1fr 4ch; gap: 4px 12px; }
+  .slider input { grid-column: 1 / -1; grid-row: 2; }
+  .inset { width: 50%; }
+}

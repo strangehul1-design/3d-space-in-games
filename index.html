@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Как устроен 3D-мир в играх</title>
+  <meta name="description" content="Семь интерактивных уроков: координаты, трансформ, меш, иерархия, камера, свет и игровой цикл. Всё можно покрутить руками.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Откуда браузер берёт three.js: одна версия для всех сцен -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#top">3D-мир изнутри</a>
+  <nav class="lessons-nav" aria-label="Уроки">
+    <a href="#coords">Координаты</a>
+    <a href="#transform">Трансформ</a>
+    <a href="#mesh">Меш</a>
+    <a href="#hierarchy">Иерархия</a>
+    <a href="#camera">Камера</a>
+    <a href="#light">Свет</a>
+    <a href="#loop">Цикл</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ============ ПЕРВЫЙ ЭКРАН ============ -->
+  <section class="hero" data-scene="hero">
+    <div class="hero-copy">
+      <h1>Как устроен 3D&#8209;мир в&nbsp;играх</h1>
+      <p>Любая игра - это точки, треугольники и немного математики. Семь коротких уроков, в каждом живая сцена, которую можно покрутить руками.</p>
+      <a class="btn btn-light" href="#coords">Начать с первого урока</a>
+    </div>
+
+    <div class="view view-hero" tabindex="-1">
+      <div class="hero-hud">
+        <p class="hud-title">Курсор над полом</p>
+        <p class="coords">
+          <span class="c-x">x <output data-out="x">0.00</output></span>
+          <span class="c-y">y <output data-out="y">0.00</output></span>
+          <span class="c-z">z <output data-out="z">0.00</output></span>
+        </p>
+      </div>
+      <p class="hero-hint">Кликни по полу - робот пойдёт туда. Тяни мышью, чтобы повернуть камеру.</p>
+    </div>
+
+    <p class="hero-note wrap">Как игра понимает, куда ты кликнул? Из камеры через курсор выпускается невидимый луч, и игра ищет, где он пересёк пол. Это называется <b>рейкаст</b>. Так работают клики в стратегиях, выстрелы в шутерах и выбор предметов мышкой.</p>
+  </section>
+
+  <!-- ============ УРОК 1 ============ -->
+  <section class="lesson wrap" id="coords" data-scene="coords">
+    <div class="lesson-text">
+      <p class="lesson-step">Урок 1 из 7</p>
+      <h2>Каждая точка - это три числа</h2>
+      <p>В 3D-мире у любой точки есть адрес из трёх чисел: <b class="c-x">X</b> - вправо и влево, <b class="c-y">Y</b> - вверх и вниз, <b class="c-z">Z</b> - вперёд и назад. Центр мира, где все три числа равны нулю, называют началом координат.</p>
+      <p>Двигай ползунки. Пунктир показывает, как точка отбрасывает «тень» на пол и на оси: по нему удобно читать её координаты.</p>
+      <p>Разные движки договорились по-разному, какая ось смотрит вверх:</p>
+      <table class="engines">
+        <thead><tr><th>Движок</th><th>Вверх</th><th>Система</th></tr></thead>
+        <tbody>
+          <tr><td>Unity</td><td class="c-y">Y</td><td>левая</td></tr>
+          <tr><td>Unreal Engine</td><td class="c-z">Z</td><td>левая</td></tr>
+          <tr><td>Godot</td><td class="c-y">Y</td><td>правая</td></tr>
+          <tr><td>Blender</td><td class="c-z">Z</td><td>правая</td></tr>
+          <tr><td>Three.js, этот сайт</td><td class="c-y">Y</td><td>правая</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Левая и правая система отличаются направлением одной оси. Поэтому модель из Blender в Unity иногда приезжает лёжа на боку.</p>
+    </div>
+
+    <div class="lesson-stage">
+      <div class="view"></div>
+      <div class="controls">
+        <label class="slider x">X <input type="range" min="-4" max="4" step="0.1" value="2" data-axis="x"><output>2.00</output></label>
+        <label class="slider y">Y <input type="range" min="0" max="4" step="0.1" value="1.5" data-axis="y"><output>1.50</output></label>
+        <label class="slider z">Z <input type="range" min="-4" max="4" step="0.1" value="1" data-axis="z"><output>1.00</output></label>
+        <div class="row">
+          <p class="readout">position = (<span class="c-x" data-out="x">2.00</span>, <span class="c-y" data-out="y">1.50</span>, <span class="c-z" data-out="z">1.00</span>)</p>
+          <button class="btn btn-ghost" type="button" data-action="reset">В начало координат</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ УРОК 2 ============ -->
+  <section class="lesson wrap" id="transform" data-scene="transform">
+    <div class="lesson-text">
+      <p class="lesson-step">Урок 2 из 7</p>
+      <h2>Позиция, поворот, масштаб</h2>
+      <p>У каждого объекта в игре есть <b>трансформ</b> - три набора чисел. Позиция говорит, где объект стоит. Поворот - куда он смотрит. Масштаб - во сколько раз он больше или меньше исходной модели.</p>
+      <p>Когда персонаж бежит, игра каждый кадр меняет его позицию. Когда оборачивается - поворот. Больше ничего и не нужно, чтобы расставить весь мир.</p>
+      <p>Тяни за стрелки и кольца прямо на модели. Клавиши <kbd>W</kbd>, <kbd>E</kbd> и <kbd>R</kbd> переключают режимы, как в Unity: сначала кликни по сцене.</p>
+      <p class="small">В редакторах поворот показывают в градусах. Внутри движок обычно хранит его в радианах или кватернионах - так удобнее считать и не бывает «шарнирного замка», когда две оси поворота совпадают.</p>
+    </div>
+
+    <div class="lesson-stage">
+      <div class="view" tabindex="0" aria-label="Сцена с роботом и манипулятором"></div>
+      <div class="controls">
+        <div class="row">
+          <div class="seg" role="group" aria-label="Режим">
+            <button type="button" data-mode="translate" aria-pressed="true">Двигать <kbd>W</kbd></button>
+            <button type="button" data-mode="rotate" aria-pressed="false">Вращать <kbd>E</kbd></button>
+            <button type="button" data-mode="scale" aria-pressed="false">Масштаб <kbd>R</kbd></button>
+          </div>
+          <button class="btn btn-ghost" type="button" data-action="reset">Сбросить</button>
+        </div>
+        <table class="readout-table">
+          <tr><th>Позиция</th><td class="c-x" data-out="px">0.00</td><td class="c-y" data-out="py">0.00</td><td class="c-z" data-out="pz">0.00</td></tr>
+          <tr><th>Поворот, °</th><td class="c-x" data-out="rx">0</td><td class="c-y" data-out="ry">0</td><td class="c-z" data-out="rz">0</td></tr>
+          <tr><th>Масштаб</th><td class="c-x" data-out="sx">1.00</td><td class="c-y" data-out="sy">1.00</td><td class="c-z" data-out="sz">1.00</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ УРОК 3 ============ -->
+  <section class="lesson wrap" id="mesh" data-scene="mesh">
+    <div class="lesson-text">
+      <p class="lesson-step">Урок 3 из 7</p>
+      <h2>Модель - это сетка из треугольников</h2>
+      <p>Видеокарта умеет рисовать только треугольники, зато очень много и очень быстро. Любая модель, от камня до персонажа, собрана из них. Такая сетка называется <b>меш</b>, а углы треугольников - <b>вершины</b>.</p>
+      <p>В каждой вершине хранится её позиция и <b>нормаль</b> - стрелка, которая показывает, куда «смотрит» поверхность. По нормалям игра считает, как на объект падает свет.</p>
+      <p>Больше треугольников - глаже форма, но тяжелее для видеокарты. Поэтому далёкие объекты в играх подменяют упрощёнными копиями. Это называется <b>LOD</b>, уровень детализации.</p>
+    </div>
+
+    <div class="lesson-stage">
+      <div class="view"></div>
+      <div class="controls">
+        <div class="row">
+          <div class="seg" role="group" aria-label="Форма">
+            <button type="button" data-shape="sphere" aria-pressed="true">Сфера</button>
+            <button type="button" data-shape="torus" aria-pressed="false">Бублик</button>
+            <button type="button" data-shape="stone" aria-pressed="false">Камень</button>
+          </div>
+        </div>
+        <label class="slider">Детализация <input type="range" min="0" max="5" step="1" value="2" data-detail><output>2</output></label>
+        <div class="row">
+          <div class="chips">
+            <label class="chip"><input type="checkbox" data-toggle="wire" checked> Каркас</label>
+            <label class="chip"><input type="checkbox" data-toggle="points"> Вершины</label>
+            <label class="chip"><input type="checkbox" data-toggle="normals"> Нормали</label>
+          </div>
+          <p class="readout"><span data-out="tris">0</span> треугольников, <span data-out="verts">0</span> вершин</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ УРОК 4 ============ -->
+  <section class="lesson wrap" id="hierarchy" data-scene="hierarchy">
+    <div class="lesson-text">
+      <p class="lesson-step">Урок 4 из 7</p>
+      <h2>Объекты вложены друг в друга</h2>
+      <p>В играх объекты собраны в дерево: меч лежит в руке, рука прикреплена к телу, тело - к персонажу. Объект-«ребёнок» двигается вместе с «родителем» и хранит свои координаты относительно него. Это <b>локальные</b> координаты. А <b>мировые</b> - где объект находится на самом деле, если считать от центра мира.</p>
+      <p>Луна здесь - ребёнок планеты, планета - ребёнок солнца. Каждый просто крутится по кругу, но в мире луна рисует сложную петлю.</p>
+      <p>Посмотри на числа: локальные координаты луны не меняются вовсе. Луна никуда не движется сама, крутятся её родители.</p>
+    </div>
+
+    <div class="lesson-stage">
+      <div class="view"></div>
+      <div class="controls">
+        <label class="slider">Планета вокруг солнца <input type="range" min="0" max="2" step="0.05" value="0.5" data-speed="planet"><output>0.50</output></label>
+        <label class="slider">Луна вокруг планеты <input type="range" min="0" max="6" step="0.1" value="2.5" data-speed="moon"><output>2.50</output></label>
+        <label class="slider x">Локальный X луны <input type="range" min="0.6" max="2" step="0.05" value="1" data-moon-x><output>1.00</output></label>
+        <div class="row">
+          <div class="chips">
+            <label class="chip"><input type="checkbox" data-toggle="axes" checked> Локальные оси</label>
+            <label class="chip"><input type="checkbox" data-toggle="trail" checked> След луны</label>
+          </div>
+          <button class="btn btn-ghost" type="button" data-action="pause">Пауза</button>
+        </div>
+        <table class="readout-table">
+          <tr><th>Луна, локально</th><td class="c-x" data-out="lx"></td><td class="c-y" data-out="ly"></td><td class="c-z" data-out="lz"></td></tr>
+          <tr><th>Луна, в мире</th><td class="c-x" data-out="wx"></td><td class="c-y" data-out="wy"></td><td class="c-z" data-out="wz"></td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ УРОК 5 ============ -->
+  <section class="lesson wrap" id="camera" data-scene="camera">
+    <div class="lesson-text">
+      <p class="lesson-step">Урок 5 из 7</p>
+      <h2>Камера видит только пирамиду</h2>
+      <p>Игрок видит мир через камеру. У неё есть угол обзора - <b>FOV</b>: чем он больше, тем шире картинка и сильнее искажения по краям.</p>
+      <p>Всё, что видит камера, помещается в усечённую пирамиду - <b>frustum</b>. У пирамиды есть ближняя и дальняя стенка: слишком близкое и слишком далёкое тоже не рисуется. Объекты вне пирамиды игра даже не отправляет видеокарте - так экономятся силы.</p>
+      <p>Большое окно - вид со стороны, жёлтые линии - пирамида камеры. Маленькое окно - то, что видит игрок. Серые объекты сейчас не рисуются.</p>
+      <p class="small">Ортографическая камера не уменьшает далёкие предметы. Так рисуют стратегии и изометрические игры.</p>
+    </div>
+
+    <div class="lesson-stage">
+      <div class="view">
+        <div class="inset" aria-hidden="true"><span>Вид игрока</span></div>
+      </div>
+      <div class="controls">
+        <div class="row">
+          <div class="seg" role="group" aria-label="Тип камеры">
+            <button type="button" data-cam="persp" aria-pressed="true">Перспектива</button>
+            <button type="button" data-cam="ortho" aria-pressed="false">Ортография</button>
+          </div>
+          <p class="readout">Рисуется <span data-out="visible">0</span> из <span data-out="total">0</span> объектов</p>
+        </div>
+        <label class="slider">Угол обзора, ° <input type="range" min="20" max="110" step="1" value="50" data-fov><output>50</output></label>
+        <label class="slider y">Поворот камеры, ° <input type="range" min="-70" max="70" step="1" value="0" data-yaw><output>0</output></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ УРОК 6 ============ -->
+  <section class="lesson wrap" id="light" data-scene="light">
+    <div class="lesson-text">
+      <p class="lesson-step">Урок 6 из 7</p>
+      <h2>Свет и материал решают, как выглядит поверхность</h2>
+      <p>Одна и та же форма может выглядеть как пластик, металл или резина - всё решает <b>материал</b>. В современных играх его описывают двумя главными числами: <b>шероховатость</b> (roughness) и <b>металличность</b> (metalness). Гладкая поверхность даёт чёткий блик, шероховатая рассеивает свет.</p>
+      <p>Тени тоже считаются: игра рисует сцену с точки зрения источника света и запоминает, что он видит. Всё, что свет не видит, оказывается в тени. Это называется <b>карта теней</b>.</p>
+      <p>Подвигай солнце и посмотри, как тени бегут по полу.</p>
+    </div>
+
+    <div class="lesson-stage">
+      <div class="view"></div>
+      <div class="controls">
+        <label class="slider">Шероховатость <input type="range" min="0" max="1" step="0.01" value="0.35" data-mat="roughness"><output>0.35</output></label>
+        <label class="slider">Металличность <input type="range" min="0" max="1" step="0.01" value="0.2" data-mat="metalness"><output>0.20</output></label>
+        <label class="slider">Высота солнца, ° <input type="range" min="5" max="85" step="1" value="45" data-sun="elevation"><output>45</output></label>
+        <label class="slider">Сторона солнца, ° <input type="range" min="0" max="360" step="1" value="40" data-sun="azimuth"><output>40</output></label>
+        <div class="row">
+          <div class="chips">
+            <label class="chip color">Цвет материала <input type="color" value="#4c8dff" data-color="material"></label>
+            <label class="chip color">Цвет света <input type="color" value="#fff4e0" data-color="light"></label>
+            <label class="chip"><input type="checkbox" data-toggle="shadows" checked> Тени</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ УРОК 7 ============ -->
+  <section class="lesson wrap" id="loop" data-scene="loop">
+    <div class="lesson-text">
+      <p class="lesson-step">Урок 7 из 7</p>
+      <h2>Игра - это цикл, который крутится 60 раз в секунду</h2>
+      <p>Каждый кадр игра делает одно и то же: смотрит, какие клавиши нажаты, двигает объекты, проверяет столкновения и рисует картинку.</p>
+      <p>Между кадрами проходит немного времени - <b>deltaTime</b>. На него умножают скорость, чтобы персонаж бегал одинаково и на слабом, и на мощном компьютере.</p>
+<pre class="code"><code>function update(dt) {
+  const dir = readKeys();           // куда жмёт игрок
+  robot.x += dir.x * speed * dt;    // скорость × время
+  robot.z += dir.z * speed * dt;
+  checkCrystals();                  // столкновения
+  render();                         // картинка на экран
+}</code></pre>
+      <p>Столкновение здесь самое простое: если до кристалла меньше метра, он собран. Ползунок «Скорость времени» замедляет весь мир, как слоу-мо.</p>
+    </div>
+
+    <div class="lesson-stage">
+      <div class="view view-game" tabindex="0" aria-label="Мини-игра: управление роботом">
+        <p class="focus-hint">Кликни сюда, чтобы управлять</p>
+        <p class="game-msg" data-out="msg" hidden></p>
+      </div>
+      <div class="controls">
+        <p class="small keys-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> или стрелки - идти, <kbd>Shift</kbd> - бежать</p>
+        <div class="pad" aria-label="Кнопки управления">
+          <button type="button" data-key="KeyW" aria-label="Вперёд">▲</button>
+          <button type="button" data-key="KeyA" aria-label="Влево">◀</button>
+          <button type="button" data-key="KeyS" aria-label="Назад">▼</button>
+          <button type="button" data-key="KeyD" aria-label="Вправо">▶</button>
+          <button type="button" data-key="ShiftLeft" class="pad-run">Бег</button>
+        </div>
+        <label class="slider">Скорость времени <input type="range" min="0.1" max="2" step="0.05" value="1" data-timescale><output>1.00</output></label>
+        <div class="row">
+          <p class="readout"><span data-out="fps">0</span> кадров в секунду</p>
+          <p class="readout">dt = <span data-out="dt">0</span> мс</p>
+          <p class="readout">Кристаллы <span data-out="gems">0</span> из <span data-out="gemsTotal">0</span></p>
+          <button class="btn btn-ghost" type="button" data-action="restart">Заново</button>
+        </div>
+        <p class="readout">position = (<span class="c-x" data-out="x">0.00</span>, <span class="c-y">0.00</span>, <span class="c-z" data-out="z">0.00</span>)</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer wrap">
+  <p>Сайт сделан на <a href="https://threejs.org">three.js</a> - самой популярной библиотеке для 3D в браузере. Модель робота - Tomás Laulhé, лицензия CC0.</p>
+  <p>Код каждой сцены лежит в папке <code>js</code>: открой, поменяй число - и сразу увидишь результат.</p>
+</footer>
+
+</body>
+</html>
