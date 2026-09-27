@@ -311,3 +311,54 @@ kbd {
   .slider input { grid-column: 1 / -1; grid-row: 2; }
   .inset { width: 50%; }
 }
+
+/* ==========================================================
+   Проектная работа: «О проекте» в начале, «Вывод» в конце
+   ========================================================== */
+.hero-copy .hero-kind { margin: 0 0 14px; font-size: 1rem; font-weight: 500; color: #9fb5d6; }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 8px; }
+.hero-actions .btn-light { margin-top: 0; }
+.hero-skip { pointer-events: auto; color: #c6d6ee; font-weight: 500; text-underline-offset: 4px; }
+.hero-skip:hover { color: #fff; }
+
+.doc {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 56px;
+  align-items: start;
+  padding-top: 88px; padding-bottom: 88px;
+  border-top: 1px solid var(--rule);
+}
+.doc-text { max-width: 40rem; }
+.doc h3 { font: 600 1.05rem/1.3 var(--font-body); margin: 1.8em 0 0.5em; }
+.doc h2 + h3 { margin-top: 0; }
+
+.tasks { margin: 0; padding-left: 1.6em; }
+.tasks li { margin-bottom: 0.55em; padding-left: 0.3em; }
+.tasks li::marker { font: 500 0.95rem var(--font-mono); color: var(--ink-soft); }
+.tasks a { color: var(--ink); text-underline-offset: 3px; white-space: nowrap; }
+
+/* Паспорт проекта - как основная надпись на чертеже: рамка и поля */
+.stamp { position: sticky; top: 84px; border: 2px solid var(--ink); background: var(--card); }
+.stamp dl { margin: 0; }
+.stamp dl > div { display: grid; grid-template-columns: 8.5rem 1fr; }
+.stamp dl > div + div { border-top: 1px solid var(--ink); }
+.stamp dt, .stamp dd { margin: 0; padding: 12px 16px; }
+.stamp dt { font-size: 0.85rem; color: var(--ink-soft); border-right: 1px solid var(--ink); }
+.stamp dd { font-size: 0.98rem; }
+.stamp .stamp-topic dd { font: 500 1.25rem/1.25 var(--font-display); letter-spacing: -0.01em; }
+
+.sources h3 { margin-top: 0; }
+.sources ol { margin: 0 0 1em; padding-left: 1.6em; font-size: 0.95rem; }
+.sources li { margin-bottom: 0.5em; padding-left: 0.3em; }
+.sources li::marker { font: 500 0.9rem var(--font-mono); color: var(--ink-soft); }
+.sources a { color: var(--ink); font-weight: 500; text-underline-offset: 3px; }
+
+@media (max-width: 900px) {
+  .hero-copy .hero-kind { color: var(--ink-soft); }
+  .hero-skip { color: var(--ink); }
+  .doc { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 56px; padding-bottom: 56px; }
+  .stamp { position: static; }
+  .stamp dl > div { grid-template-columns: 7rem 1fr; }
+  .stamp dt, .stamp dd { padding: 10px 12px; }
+}

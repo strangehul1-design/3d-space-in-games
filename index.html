@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Как устроен 3D-мир в играх</title>
-  <meta name="description" content="Семь интерактивных уроков: координаты, трансформ, меш, иерархия, камера, свет и игровой цикл. Всё можно покрутить руками.">
+  <title>Как устроен 3D-мир в играх - проектная работа</title>
+  <meta name="description" content="Проектная работа: как устроено трёхмерное пространство в компьютерных играх. Семь интерактивных уроков - координаты, трансформ, меш, иерархия, камера, свет и игровой цикл. Всё можно покрутить руками.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,8 @@
 
 <header class="topbar">
   <a class="brand" href="#top">3D-мир изнутри</a>
-  <nav class="lessons-nav" aria-label="Уроки">
+  <nav class="lessons-nav" aria-label="Разделы">
+    <a href="#about">О проекте</a>
     <a href="#coords">Координаты</a>
     <a href="#transform">Трансформ</a>
     <a href="#mesh">Меш</a>
@@ -34,6 +35,7 @@
     <a href="#camera">Камера</a>
     <a href="#light">Свет</a>
     <a href="#loop">Цикл</a>
+    <a href="#conclusion">Вывод</a>
   </nav>
 </header>
 
@@ -42,9 +44,13 @@
   <!-- ============ ПЕРВЫЙ ЭКРАН ============ -->
   <section class="hero" data-scene="hero">
     <div class="hero-copy">
+      <p class="hero-kind">Проектная работа</p>
       <h1>Как устроен 3D&#8209;мир в&nbsp;играх</h1>
       <p>Любая игра - это точки, треугольники и немного математики. Семь коротких уроков, в каждом живая сцена, которую можно покрутить руками.</p>
-      <a class="btn btn-light" href="#coords">Начать с первого урока</a>
+      <div class="hero-actions">
+        <a class="btn btn-light" href="#about">Цель и задачи проекта</a>
+        <a class="hero-skip" href="#coords">Сразу к урокам</a>
+      </div>
     </div>
 
     <div class="view view-hero" tabindex="-1">
@@ -60,6 +66,41 @@
     </div>
 
     <p class="hero-note wrap">Как игра понимает, куда ты кликнул? Из камеры через курсор выпускается невидимый луч, и игра ищет, где он пересёк пол. Это называется <b>рейкаст</b>. Так работают клики в стратегиях, выстрелы в шутерах и выбор предметов мышкой.</p>
+  </section>
+
+  <!-- ============ О ПРОЕКТЕ ============ -->
+  <section class="doc wrap" id="about">
+    <div class="doc-text">
+      <h2>О проекте</h2>
+
+      <h3>Актуальность</h3>
+      <p>В трёхмерном пространстве работают игры, симуляторы, архитектурные визуализации и виртуальные примерочные. Чтобы их создавать, нужно понимать, как компьютер хранит и показывает 3D-мир. Обычно это объясняют формулами и схемами на бумаге, а трёхмерные вещи на плоском рисунке понять трудно. Гораздо нагляднее, когда сцену можно повернуть и изменить самому.</p>
+
+      <h3>Цель</h3>
+      <p>Наглядно объяснить, как устроено трёхмерное пространство в компьютерных играх, и сделать интерактивное пособие, в котором каждое понятие можно проверить на живой сцене.</p>
+
+      <h3>Задачи</h3>
+      <ol class="tasks">
+        <li>Разобраться, как задаётся положение точки: координаты <b class="c-x">X</b>, <b class="c-y">Y</b>, <b class="c-z">Z</b> и системы осей в разных движках (<a href="#coords">урок 1</a>).</li>
+        <li>Изучить трансформ объекта: позицию, поворот и масштаб (<a href="#transform">урок 2</a>).</li>
+        <li>Выяснить, из чего состоит 3D-модель и зачем играм уровни детализации (<a href="#mesh">урок 3</a>).</li>
+        <li>Показать иерархию объектов и разницу между локальными и мировыми координатами (<a href="#hierarchy">урок 4</a>).</li>
+        <li>Разобрать работу камеры: угол обзора, пирамиду видимости и отсечение лишнего (<a href="#camera">урок 5</a>).</li>
+        <li>Показать, как свет и материал меняют вид поверхности (<a href="#light">урок 6</a>).</li>
+        <li>Объяснить игровой цикл и роль deltaTime (<a href="#loop">урок 7</a>).</li>
+        <li>Собрать всё в интерактивный сайт с живыми 3D-сценами.</li>
+      </ol>
+    </div>
+
+    <aside class="stamp" aria-label="Паспорт проекта">
+      <dl>
+        <div class="stamp-topic"><dt>Тема</dt><dd>Как устроен 3D-мир в играх</dd></div>
+        <div><dt>Вид работы</dt><dd>Проектная работа</dd></div>
+        <div><dt>Продукт</dt><dd>Интерактивный сайт: 7 уроков и 8 живых 3D-сцен</dd></div>
+        <div><dt>Технологии</dt><dd>HTML, CSS, JavaScript, three.js</dd></div>
+        <div><dt>Где работает</dt><dd>В браузере на компьютере и телефоне, без установки</dd></div>
+      </dl>
+    </aside>
   </section>
 
   <!-- ============ УРОК 1 ============ -->
@@ -289,6 +330,31 @@
         </div>
         <p class="readout">position = (<span class="c-x" data-out="x">0.00</span>, <span class="c-y">0.00</span>, <span class="c-z" data-out="z">0.00</span>)</p>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ ВЫВОД ============ -->
+  <section class="doc wrap" id="conclusion">
+    <div class="doc-text">
+      <h2>Вывод</h2>
+      <p>Трёхмерный мир игры держится на нескольких простых идеях. Положение любой точки - это три числа. Каждый объект описывается трансформом: позицией, поворотом и масштабом. Модели собраны из треугольников, объекты вложены друг в друга, а камера показывает только то, что попало в её пирамиду видимости. Свет и материал решают, как выглядит поверхность, а игровой цикл каждый кадр двигает мир с поправкой на deltaTime.</p>
+      <p>Все задачи проекта выполнены: каждое понятие разобрано в отдельном уроке и показано на живой 3D-сцене, где его можно изменить и сразу увидеть результат. Сайт работает в браузере без установки и подойдёт как наглядное пособие для тех, кто начинает разбираться в разработке игр.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Источники</h3>
+      <ol>
+        <li><a href="https://threejs.org/docs/">three.js docs</a>. Документация библиотеки three.js.</li>
+        <li><a href="https://docs.unity3d.com/Manual/class-Transform.html">Transforms</a>. Unity Manual.</li>
+        <li><a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/coordinate-system-and-spaces-in-unreal-engine">Coordinate System and Spaces</a>. Документация Unreal Engine.</li>
+        <li><a href="https://docs.godotengine.org/en/stable/tutorials/3d/using_transforms.html">Using 3D transforms</a>. Документация Godot Engine.</li>
+        <li><a href="https://learnopengl.com/Getting-started/Coordinate-Systems">Coordinate Systems</a>. LearnOpenGL.</li>
+        <li><a href="https://learnopengl.com/Getting-started/Camera">Camera</a>. LearnOpenGL.</li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/Basic_theory">Explaining basic 3D theory</a>. MDN Web Docs.</li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_model_view_projection">WebGL model view projection</a>. MDN Web Docs.</li>
+        <li><a href="https://gameprogrammingpatterns.com/game-loop.html">Game Loop</a>. Nystrom R. Game Programming Patterns.</li>
+      </ol>
+      <p class="small">Дата обращения ко всем ресурсам: 27.09.2026.</p>
     </div>
   </section>
 

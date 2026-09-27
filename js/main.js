@@ -46,20 +46,20 @@ const starter = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('[data-scene]').forEach((section) => starter.observe(section));
 
-// Подсветка текущего урока в шапке
+// Подсветка текущего раздела в шапке. На первом экране не подсвечено ничего.
 const links = new Map(
   [...document.querySelectorAll('.lessons-nav a')].map((a) => [a.hash.slice(1), a]),
 );
 const spy = new IntersectionObserver((entries) => {
   for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    links.forEach((a) => a.removeAttribute('aria-current'));
     const link = links.get(entry.target.id);
-    if (link && entry.isIntersecting) {
-      links.forEach((a) => a.removeAttribute('aria-current'));
-      link.setAttribute('aria-current', 'true');
-      // На телефоне шапка прокручивается вбок - держим текущий урок посередине
-      const nav = link.parentElement;
-      nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.clientWidth) / 2 });
-    }
+    if (!link) continue;
+    link.setAttribute('aria-current', 'true');
+    // На телефоне шапка прокручивается вбок - держим текущий раздел посередине
+    const nav = link.parentElement;
+    nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.clientWidth) / 2 });
   }
 }, { rootMargin: '-45% 0px -50% 0px' });
-document.querySelectorAll('.lesson').forEach((s) => spy.observe(s));
+document.querySelectorAll('.hero, .lesson, .doc').forEach((s) => spy.observe(s));
